@@ -64,7 +64,7 @@ def setup_environment():
     for rotation, energy in light_params:
         light = bproc.types.Light()
         light.set_type("SUN")
-        light.set_energy(2 * energy)
+        light.set_energy(4 * energy)
         light.set_rotation_euler(np.radians(rotation))
         
         # CRITICAL FIX: Soften the shadows to mimic Gazebo's ambient light
@@ -116,6 +116,7 @@ def randomize_assembly(nic, sc):
         cfg = ASSEMBLY_CONFIG["nic"]
         # Generate random offsets (applied to all 3 axes)
         loc_offset = np.random.uniform(cfg["loc_limit"][0], cfg["loc_limit"][1], size=3)
+        loc_offset[1] = max(0, loc_offset[2]) # Ensure that Z is not negative, or the component would get buried under the base
         rot_offset = np.radians(np.random.uniform(cfg["rot_limit"][0], cfg["rot_limit"][1], size=3))
         
         nic.set_location(cfg["nominal_loc"] + loc_offset)
@@ -124,6 +125,7 @@ def randomize_assembly(nic, sc):
     if sc:
         cfg = ASSEMBLY_CONFIG["sc"]
         loc_offset = np.random.uniform(cfg["loc_limit"][0], cfg["loc_limit"][1], size=3)
+        loc_offset[1] = max(0, loc_offset[2]) # Ensure that Z is not negative, or the component would get buried under the base
         rot_offset = np.radians(np.random.uniform(cfg["rot_limit"][0], cfg["rot_limit"][1], size=3))
         
         sc.set_location(cfg["nominal_loc"] + loc_offset)
